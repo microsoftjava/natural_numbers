@@ -80,19 +80,27 @@ instance : Mul meow_nat where
 #eval nat_from_meownat (meownat_from_nat (6) * meownat_from_nat (3))
 #eval nat_from_meownat (meownat_from_nat (17) * meownat_from_nat (10))
 
+--definition of ≤
+def le (a b : meow_nat) := ∃ (c : meow_nat), b = a + c
+
+--notation
+instance : LE meow_nat := ⟨le⟩
+
+--definition of <
+def lt (a b : meow_nat) := a ≤ b ∧ ¬ (b ≤ a)
+
+--notation
+instance : LT meow_nat := ⟨lt⟩
+
 --definition of division
 --I know how to define it recursively but that is not fun >:(
-/-
 def div : meow_nat → meow_nat → meow_nat
   | a, b =>
-    if a = b then
-      1
+    have meow := a - b
+    if h : 0 < b ∧ b ≤ a then
+      1 + div meow b
     else
-      have meow := a - b
-      if b ≠ 0 ∧ meow ≠ 0 then
-        1 + div meow b
-      else
-        0
+      0
 
 instance : Div meow_nat where
   div := meow_nat.div
@@ -103,5 +111,5 @@ instance : Div meow_nat where
 #eval nat_from_meownat (meownat_from_nat (10) / meownat_from_nat (17))
 #eval nat_from_meownat (meownat_from_nat (6) / meownat_from_nat (3))
 #eval nat_from_meownat (meownat_from_nat (17) / meownat_from_nat (10))
--/
+
 end meow_nat
