@@ -51,6 +51,7 @@ def pred : meow_nat → meow_nat
   | zero   => zero
   | succ n => n
 
+--definition of subtraction
 def sub : meow_nat → meow_nat → meow_nat
   | 0, _      => 0
   | a, 0      => a
@@ -64,5 +65,19 @@ instance : Sub meow_nat where
 #eval nat_from_meownat (meownat_from_nat (10) - meownat_from_nat (17))
 #eval nat_from_meownat (meownat_from_nat (6) - meownat_from_nat (3))
 #eval nat_from_meownat (meownat_from_nat (17) - meownat_from_nat (10))
+
+--definition of multiplication
+def mul : meow_nat → meow_nat → meow_nat
+  | _, 0      => 0
+  | a, succ b => a + (mul a b)
+
+instance : Mul meow_nat where
+  mul := meow_nat.mul
+
+--test cases to check validity
+#eval nat_from_meownat (meownat_from_nat (3) * meownat_from_nat (6))
+#eval nat_from_meownat (meownat_from_nat (10) * meownat_from_nat (17))
+#eval nat_from_meownat (meownat_from_nat (6) * meownat_from_nat (3))
+#eval nat_from_meownat (meownat_from_nat (17) * meownat_from_nat (10))
 
 end meow_nat
