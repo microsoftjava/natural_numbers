@@ -82,6 +82,7 @@ instance : Mul meow_nat where
 
 --definition of division
 --I know how to define it recursively but that is not fun >:(
+/-
 def div : meow_nat → meow_nat → meow_nat
   | a, b =>
     if a = b then
@@ -102,5 +103,5 @@ instance : Div meow_nat where
 #eval nat_from_meownat (meownat_from_nat (10) / meownat_from_nat (17))
 #eval nat_from_meownat (meownat_from_nat (6) / meownat_from_nat (3))
 #eval nat_from_meownat (meownat_from_nat (17) / meownat_from_nat (10))
-
+-/
 end meow_nat
