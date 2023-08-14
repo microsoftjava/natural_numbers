@@ -1,24 +1,43 @@
---gotten from https://github.com/PatrickMassot/NNG4/blob/main/NNG/MyNat.lean
+--gotten from https://github.com/leanprover/lean4-samples/blob/main/NaturalNumbers/MyNat/Definition.lean
 
-axiom meow_nat : Type
+--import statements
+import Mathlib.Tactic.Basic
+import Mathlib.Tactic.Cases
 
-axiom succ : meow_nat → meow_nat
+--definition of meow_nat
+inductive meow_nat where
+  | zero : meow_nat
+  | succ : meow_nat → meow_nat
+  deriving Repr, BEq, DecidableEq, Inhabited
 
-@[instance] axiom meow_of_nat (n : Nat) : OfNat meow_nat n
+namespace meow_nat
 
-@[instance] axiom meow_add : HAdd meow_nat meow_nat meow_nat
+instance : Inhabited meow_nat where
+  default := zero
 
-@[instance] axiom meow_sub : HSub meow_nat meow_nat meow_nat
+--definition of simple functions
+def meownat_from_nat (n : Nat) : meow_nat :=
+  match n with
+  | Nat.zero   => zero
+  | Nat.succ a => succ (meownat_from_nat a)
 
-@[instance] axiom meow_mul : HMul meow_nat meow_nat meow_nat
+def nat_from_meownat (n : meow_nat) : Nat :=
+  match n with
+  | zero   => Nat.zero
+  | succ a => Nat.succ (nat_from_meownat a)
 
-@[instance] axiom meow_div : HDiv meow_nat meow_nat meow_nat
+instance : OfNat meow_nat n where
+  ofNat := meownat_from_nat n
 
-@[instance] axiom meow_pow : HPow meow_nat meow_nat meow_nat
+instance : ToString meow_nat where
+  toString s := toString (nat_from_meownat s)
 
-@[elabAsElim] axiom meow_induction {P : meow_nat → Prop}
-(n : meow_nat) (h₀ : P 0) (h : ∀ n, P n → P (succ n)) : P n
+--definition of addition
+def meow_nat.add : meow_nat → meow_nat → meow_nat
+  | a, 0 => a
+  | a, succ b => succ (meow_nat.add a b)
 
-axiom add_zero : ∀ a : meow_nat, a + 0 = a
+instance : Add meow_nat where
+  add := meow_nat.add
 
-axiom add_succ : ∀ a b : meow_nat, a + succ b = succ (a + b)
+end meow_nat
