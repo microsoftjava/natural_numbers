@@ -40,6 +40,22 @@ def add : meow_nat → meow_nat → meow_nat
 instance : Add meow_nat where
   add := meow_nat.add
 
+lemma add_zero (n : meow_nat) : n + zero = n := by
+  rfl
+
+lemma add_succ (a b : meow_nat) : a + succ b = succ (a + b) := by
+  rfl
+
+lemma zero_add (n : meow_nat) : zero + n = n := by
+  induction n with
+  | zero     => rfl
+  | succ n h => rw [add_succ, h]
+
+lemma add_assoc (a b c : meow_nat) : (a + b) + c = a + (b + c) := by
+  induction c with
+  | zero      => rw [add_zero, add_zero]
+  | succ d hd => rw [add_succ, add_succ, add_succ, hd]
+
 --test cases to check validity
 #eval nat_from_meownat (meownat_from_nat (3) + meownat_from_nat (6))
 #eval nat_from_meownat (meownat_from_nat (10) + meownat_from_nat (17))
@@ -92,15 +108,34 @@ def lt (a b : meow_nat) := a ≤ b ∧ ¬ (b ≤ a)
 --notation
 instance : LT meow_nat := ⟨lt⟩
 
+lemma le_trans {a b k : meow_nat} (h : a ≤ b) : b ≤ k → a ≤ k := by
+  intro h₁
+  cases h with
+  | intro d h => 
+      cases h₁ with
+      | intro e h₁ =>
+        exists (d + e)
+        rw [h] at h₁
+        rw [← add_assoc]
+        exact h₁
+
+lemma lt_of_lt_of_le {n m k : meow_nat} : n < m → m ≤ k → n < k := by
+  sorry
+
+/-
 --definition of division
 --I know how to define it recursively but that is not fun >:(
 def div : meow_nat → meow_nat → meow_nat
   | a, b =>
-    have meow := a - b
-    if h : 0 < b ∧ b ≤ a then
-      1 + div meow b
+    if a = b then
+      1
     else
-      0
+      have meow := a - b
+      if b ≠ 0 ∧ meow ≠ 0 then
+      --if h : 0 < b ∧ b ≤ a then
+        1 + div meow b
+      else
+        0
 
 instance : Div meow_nat where
   div := meow_nat.div
@@ -111,5 +146,5 @@ instance : Div meow_nat where
 #eval nat_from_meownat (meownat_from_nat (10) / meownat_from_nat (17))
 #eval nat_from_meownat (meownat_from_nat (6) / meownat_from_nat (3))
 #eval nat_from_meownat (meownat_from_nat (17) / meownat_from_nat (10))
-
+-/
 end meow_nat
