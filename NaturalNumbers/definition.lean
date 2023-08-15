@@ -108,6 +108,13 @@ def lt (a b : meow_nat) := a ≤ b ∧ ¬ (b ≤ a)
 --notation
 instance : LT meow_nat := ⟨lt⟩
 
+lemma le_def_iff {a b : meow_nat} :
+  a ≤ b ↔ ∃ (c : meow_nat), b = a + c := by
+  rfl
+
+lemma lt_def_iff {a b : meow_nat} : a < b ↔ a ≤ b ∧ ¬ (b ≤ a) := by
+  rfl
+
 lemma le_trans {a b k : meow_nat} (h : a ≤ b) : b ≤ k → a ≤ k := by
   intro h₁
   cases h with
@@ -119,8 +126,33 @@ lemma le_trans {a b k : meow_nat} (h : a ≤ b) : b ≤ k → a ≤ k := by
         rw [← add_assoc]
         exact h₁
 
+lemma eq_means_le {a b : meow_nat} : a = b → a ≤ b := by
+  intro h
+  exists zero
+  rw [add_zero]
+  exact h.symm
+
+lemma eq_means_le_with_h {a b : meow_nat} (h : a = b) : a ≤ b := by
+  exists zero
+  rw [add_zero]
+  exact h.symm
+
+lemma plus_means_le {a b c : meow_nat} : a = b + c → b ≤ a := by
+  intro h
+  exists c
+
 lemma lt_of_lt_of_le {n m k : meow_nat} : n < m → m ≤ k → n < k := by
-  sorry
+  intros h h₁
+  rw [lt_def_iff] at h
+  cases h with
+  | intro d hd =>
+    rw [lt_def_iff]
+    apply And.intro
+    apply le_trans d
+    exact h₁
+    intro he
+    apply hd
+    apply le_trans h₁ he
 
 /-
 --definition of division
